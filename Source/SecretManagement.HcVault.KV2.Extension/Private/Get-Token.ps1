@@ -1,13 +1,11 @@
-function Get-Token([hashtable]$AdditionalParameters) {
+function Get-Token([hashtable]$AP) {
 
     #If AuthType is Ldap, use contents at LdapCredPath to get a token
-    if ($AdditionalParameters.AuthType -eq 'LDAP') {
+    if ($AP.AuthType -eq 'LDAP') {
 
-        $VaultAuthLdapPath = $AdditionalParameters.Server +
-            $AdditionalParameters.ApiVersion +
-            '/auth/ldap/login'
+        $VaultAuthLdapPath = $AP.Server + $AP.ApiVersion + '/auth/ldap/login'
 
-        $LdapCredential = Import-CliXml -Path $AdditionalParameters.LdapCredPath
+        $LdapCredential = Import-CliXml -Path $AP.LdapCredPath
         $UserName       = $LdapCredential.GetNetworkCredential().Username
         $PlainPassword  = $LdapCredential.GetNetworkCredential().Password
 
