@@ -54,8 +54,11 @@ $RegisterParams = @{
     AllowClobber     = $true
 }
 Register-SecretVault @RegisterParams
+```
 
-#and get the value for key 'mykey' with:
+and get the value for key 'mykey' with:
+
+```pwsh
 Get-Secret -Vault 'myvault' -Name 'mykey' -AsPlainText
 ```
 
