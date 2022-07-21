@@ -49,7 +49,7 @@ $RegisterParams = @{
         Kv2Path        = '/mypath/to/keys'
         AuthType       = 'LDAP'
         TokenCachePath = 'C:\.vault-token'
-        LdapCredPath   =  'C:\mycred.dat'
+        LdapCredPath   = 'C:\mycred.dat'
     }
     AllowClobber     = $true
 }
