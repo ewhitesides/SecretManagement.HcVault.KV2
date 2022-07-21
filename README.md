@@ -43,11 +43,13 @@ $RegisterParams = @{
     Name            = 'myvault'
     Module          = 'SecretManagement.HcVault.KV2'
     VaultParameters = @{
-        Server       = 'https://myvault.com'
-        Kv2Mount     = 'secret'
-        Kv2Path      = 'mypath/to/keys'
-        AuthType     = 'LDAP'
-        LdapCredPath =  'C:\mycred.dat'
+        Server         = 'https://myvault.com'
+        ApiVersion     = '/v1'
+        Kv2Mount       = 'secret'
+        Kv2Path        = '/mypath/to/keys'
+        AuthType       = 'LDAP'
+        TokenCachePath = 'C:\.vault-token'
+        LdapCredPath   =  'C:\mycred.dat'
     }
     AllowClobber     = $true
 }

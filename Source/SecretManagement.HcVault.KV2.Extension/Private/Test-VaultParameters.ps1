@@ -3,11 +3,14 @@ function Test-VaultParameters ([hashtable]$VaultParameters) {
 .DESCRIPTION
 internal function to make sure vault parameters are what we expect
 #>
+
     $RequiredKeys = @(
         'Server'
-        'AuthType'
+        'ApiVersion'
         'Kv2Mount'
         'Kv2Path'
+        'AuthType'
+        'TokenCachePath'
     )
 
     if ($VaultParameters.AuthType -eq 'LDAP') {

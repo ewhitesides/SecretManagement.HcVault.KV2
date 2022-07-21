@@ -23,32 +23,37 @@ function Get-Secret {
     #message
     Write-Information "Getting secret $Name from vault $VaultName"
 
+    #set AdditionalParameters to shorter variable to stay within 80 column
+    $AP = $AdditionalParameters
+
     #Validate AdditionalParameters
-    Test-VaultParameters $AdditionalParameters
+    Test-VaultParameters $AP
 
-    #Create vault url path vars
-    $VaultRoot = $AdditionalParameters.Server + '/v1'
+    #Construct uri
+    $Uri = $AP.Server + $AP.ApiVersion + $AP.Kv2Mount + '/data' + $AP.Kv2Path
 
-    #If AuthType is Ldap, use contents at LdapCredPath to get a token
-    if ($AdditionalParameters.AuthType -eq 'LDAP') {
-        $VaultAuthLdapLogin = $VaultRoot+'/auth/ldap/login'
-        $LdapCredential     = Import-CliXml -Path $AdditionalParameters.LdapCredPath
-        $UserName           = $LdapCredential.GetNetworkCredential().Username
-        $PlainPassword      = $LdapCredential.GetNetworkCredential().Password
-        $IrmGetTokenParams  = @{
-            Method = 'Post'
-            Uri    = "$VaultAuthLdapLogin/$UserName"
-            Body   = @{password = $PlainPassword} | ConvertTo-Json
+    Try {
+        #try to get secret using cached token
+        $Token = Get-CachedToken $AP.TokenCachePath
+        $IrmGetSecretParams = @{
+            Uri = $Uri
+            Headers = @{"X-Vault-Token"="$Token"}
         }
-        [ValidateNotNullOrEmpty()]
-        $Token = (Invoke-RestMethod @IrmGetTokenParams).auth.client_token
+        (Invoke-RestMethod @IrmGetSecretParams).data.data |
+        Select-Object -ExpandProperty $Name
     }
-
-    $IrmGetSecretParams = @{
-        Uri = $VaultRoot +
-            "/$($AdditionalParameters.Kv2Mount)/data" +
-            "/$($AdditionalParameters.Kv2Path)"
-        Headers = @{"X-Vault-Token"="$Token"}
+    Catch {
+        #if it fails, try with a fresh token
+        $Token = Get-Token $AP
+        $IrmGetSecretParams = @{
+            Uri = $Uri
+            Headers = @{"X-Vault-Token"="$Token"}
+        }
+        (Invoke-RestMethod @IrmGetSecretParams).data.data |
+        Select-Object -ExpandProperty $Name
     }
-    (Invoke-RestMethod @IrmGetSecretParams).data.data | Select-Object -ExpandProperty $Name
+    Finally {
+        #set the token that succeeded to cache for next use
+        Set-CachedToken $AP.TokenCachePath $Token
+    }
 }
