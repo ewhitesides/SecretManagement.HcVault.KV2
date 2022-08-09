@@ -1,4 +1,4 @@
-Describe 'TokenAuth' -Tag 'Integration' {
+Describe 'TokenAuthFunctions' -Tag 'Integration' {
     BeforeAll {
         #set vault environment variables
         $VaultFile = ".vault.json"
