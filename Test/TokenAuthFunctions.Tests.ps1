@@ -43,8 +43,15 @@ Describe 'TokenAuthFunctions' -Tag 'Integration' {
         Register-SecretVault @RegisterParams
     }
 
-    It 'given parameter for key, Get-Secret should return the value' {
+    It 'given specific key for Name, Get-Secret should return the value' {
         Get-Secret -Vault $VaultName -Name 'password' -AsPlainText |
+        Should -Be 'supersecret'
+    }
+
+    It 'given * for Name, Get-Secret should return json string' {
+        Get-Secret -Vault $VaultName -Name '*' -AsPlainText |
+        ConvertFrom-Json |
+        Select-Object -ExpandProperty 'password' |
         Should -Be 'supersecret'
     }
 

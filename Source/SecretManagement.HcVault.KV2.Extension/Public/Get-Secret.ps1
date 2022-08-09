@@ -39,8 +39,14 @@ function Get-Secret {
             Uri = $Uri
             Headers = @{"X-Vault-Token"="$Token"}
         }
-        (Invoke-RestMethod @IrmGetSecretParams).data.data |
-        Select-Object -ExpandProperty $Name
+        if ($Name -eq '*') {
+            (Invoke-RestMethod @IrmGetSecretParams).data.data |
+            ConvertTo-Json
+        }
+        else {
+            (Invoke-RestMethod @IrmGetSecretParams).data.data |
+             Select-Object -ExpandProperty $Name
+        }
     }
     Catch {
         #if it fails, try with a fresh token
