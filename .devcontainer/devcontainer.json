@@ -9,26 +9,28 @@
 		"args": { "VARIANT": "ubuntu-20.04" }
 	},
 
+	"settings": {
+		"pesterExplorer.autoDiscoverOnOpen": true,
+		"pesterExplorer.testRootDirectory": "./Tests"
+	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-vscode.powershell",          //powershell
-		"ms-azuretools.vscode-docker",   //for editing dockerfile
-		"davidanson.vscode-markdownlint" //for checking syntax on markdown files
+		"ms-vscode.powershell",            //powershell
+		"ms-azuretools.vscode-docker",     //for editing dockerfile
+		"davidanson.vscode-markdownlint",  //for checking syntax on markdown files
+		"pspester.pester-test"             //for running pester tests
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// exposing 8200 in case we want to look at vault with web UI
 	"forwardPorts": [8200],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "uname -a",
 
-	"containerEnv": {
-		"LOCALDEV": "${containerWorkspaceFolder}/.localdev"
-	},
-
 	// post start commands
-	"postStartCommand": "./.devcontainer/load_starship.sh && ./.devcontainer/load_localdev.sh",
+	"postStartCommand": "./.devcontainer/load_starship.sh && ./.devcontainer/new_vaultfile.sh && ./.devcontainer/install_psmodules.sh",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",

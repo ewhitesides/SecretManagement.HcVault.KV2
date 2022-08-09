@@ -12,9 +12,12 @@ while [ -z "$token" -a $i -lt $max ]; do
     let "i+=1"
 done
 
-#create localdev source file
-#$LOCALDEV var comes from environment (devcontainer.json)
-cat << EOF > $LOCALDEV
-export VAULT_ADDR='http://127.0.0.1:8200'
-export VAULT_TOKEN='$token'
+#set json file with vault vars
+#pester tests will load this into powershell environment
+output_file='./Test/.vault.json'
+cat << EOF > $output_file
+{
+    "VAULT_ADDR":  "http://127.0.0.1:8200",
+    "VAULT_TOKEN": "$token"
+}
 EOF
