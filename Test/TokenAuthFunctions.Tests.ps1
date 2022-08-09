@@ -44,7 +44,8 @@ Describe 'TokenAuthFunctions' -Tag 'Integration' {
     }
 
     It 'given parameter for key, Get-Secret should return the value' {
-        Get-Secret -Vault $VaultName -Name 'password' -AsPlainText | Should -Be 'supersecret'
+        Get-Secret -Vault $VaultName -Name 'password' -AsPlainText |
+        Should -Be 'supersecret'
     }
 
     AfterAll {
