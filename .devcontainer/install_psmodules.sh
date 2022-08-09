@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/pwsh
 
-modules=('Pester' 'Microsoft.PowerShell.SecretManagement')
+$Modules=@('Pester','Microsoft.PowerShell.SecretManagement')
 
-for module in "${modules[@]}"; do
-    /usr/bin/pwsh -Command "Install-Module $module -Force"
-done
+ForEach ($Module in $Modules) {
+    Install-Module $Module -Force
+}
