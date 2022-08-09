@@ -38,6 +38,10 @@ Describe 'Get-Secret' -Tag 'Unit' {
         Register-SecretVault @RegisterParams
     }
 
+    It 'given parameter for key, Get-Secret should return the value' {
+        Get-Secret -Vault 'pestertestvault' -Name 'password' -AsPlainText | Should -Be 'supersecret'
+    }
+
     It 'given no parameters, vault status should be initialized' {
         $status = vault status -format=json
         ($status | convertfrom-json).initialized | Should -Be 'true'
