@@ -3,14 +3,16 @@
 
 Describe 'Get-Secret' -Tag 'Integration' {
     BeforeAll {
-        #module vars
+        #add this extension module to modulepath via symbolic link
+        #so Microsoft.PowerShell.SecretManagement module can see it
+        $ModuleName = (
+            Get-ChildItem -Path '../../Source' |
+            Where-Object {$_.Extension -eq '.psd1'}
+        ).BaseName
         $ModulePath    = $env:PSModulePath.Split(':')[0]
-        $ModuleName    = 'SecretManagement.HcVault.KV2'
         $SymLinkPath   = "$ModulePath/$ModuleName"
         $SymLinkTarget = (Get-Item -Path '../../Source').FullName
 
-        #link our module to module path so
-        #Microsoft.PowerShell.SecretManagement module can use it
         New-Item -ItemType 'SymbolicLink' -Path $SymLinkPath -Target $SymLinkTarget
 
         #set vault env variables for vault cli

@@ -2,12 +2,14 @@
 
 Describe 'Get-Secret' -Tag 'Unit' {
     BeforeAll {
-        #Import Get-Secret as Get-ExtSecret to avoid confusion with
-        #Get-Secret from 'Microsoft.PowerShell.SecretManagement'
+        #Import Get-Secret as Get-ExtSecret from the Extension's Nested Module,
+        #to avoid confusion with Get-Secret from Microsoft.Powershell.SecretManagement
+        $NestedModuleName = (
+            Get-ChildItem -Path '../../Source' |
+            Where-Object {$_.Name -match 'Extension$'}
+        ).Name
         $IpmoParams = @{
-            Name   = '../../Source' +
-                '/SecretManagement.HcVault.KV2.Extension' +
-                '/SecretManagement.HcVault.KV2.Extension.psd1'
+            Name   = "../../Source/$NestedModuleName/$NestedModuleName.psd1"
             Prefix = 'Ext'
         }
         Import-Module @IpmoParams
