@@ -3,7 +3,7 @@
 Describe 'Get-Secret' -Tag 'Integration' {
     BeforeAll {
         #set vault environment variables
-        $VaultFile = ".vault.json"
+        $VaultFile = "../.vault.json"
         $VaultJson = Get-Content -Path $VaultFile | ConvertFrom-Json
         $env:VAULT_ADDR  = $VaultJson.VAULT_ADDR
         $env:VAULT_TOKEN = $VaultJson.VAULT_TOKEN
@@ -12,7 +12,7 @@ Describe 'Get-Secret' -Tag 'Integration' {
         $ModulePath    = $env:PSModulePath.Split(':')[0]
         $ModuleName    = 'SecretManagement.HcVault.KV2'
         $SymLinkPath   = "$ModulePath/$ModuleName"
-        $SymLinkTarget = (Get-Item -Path '../Source').FullName
+        $SymLinkTarget = (Get-Item -Path '../../Source').FullName
         $VaultName     = 'pestertestvault'
         $CacheDir      = "$env:HOME/$VaultName"
         $CacheFilePath = "$env:HOME/$VaultName/.vault-token"
