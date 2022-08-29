@@ -1,4 +1,5 @@
 #Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
+#Requires -Modules @{ModuleName='Microsoft.PowerShell.SecretManagement';ModuleVersion='1.1.2'}
 
 Describe 'Get-Secret' -Tag 'Integration' {
     BeforeAll {
