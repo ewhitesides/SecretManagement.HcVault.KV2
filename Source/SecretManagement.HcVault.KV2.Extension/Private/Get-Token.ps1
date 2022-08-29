@@ -9,12 +9,12 @@ function Get-Token([hashtable]$AP) {
         $UserName       = $LdapCredential.GetNetworkCredential().Username
         $PlainPassword  = $LdapCredential.GetNetworkCredential().Password
 
-        $IrmGetTokenParams = @{
+        $Params = @{
             Method = 'Post'
             Uri    = "$VaultAuthLdapPath/$UserName"
             Body   = @{password = $PlainPassword} | ConvertTo-Json
         }
-        $Output = (Invoke-RestMethod @IrmGetTokenParams).auth.client_token
+        $Output = (Invoke-RestMethod @Params).auth.client_token
     }
 
     $Output

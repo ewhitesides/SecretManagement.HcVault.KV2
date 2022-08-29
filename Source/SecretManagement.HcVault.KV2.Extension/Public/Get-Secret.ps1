@@ -34,31 +34,36 @@ function Get-Secret {
 
     Try {
         #try to get secret using cached token
-        $Token = Get-CachedToken $AP.TokenCachePath
-        $IrmGetSecretParams = @{
+        $Token = Get-CachedToken $AP
+        $Params = @{
             Uri = $Uri
             Headers = @{"X-Vault-Token"="$Token"}
         }
         if ($Name -eq '*') {
-            (Invoke-RestMethod @IrmGetSecretParams).data.data |
+            (Invoke-RestMethod @Params).data.data |
             ConvertTo-Json
         }
         else {
-            (Invoke-RestMethod @IrmGetSecretParams).data.data |
-             Select-Object -ExpandProperty $Name
+            (Invoke-RestMethod @Params).data.data |
+            Select-Object -ExpandProperty $Name
         }
     }
     Catch {
         #if it fails, try with a fresh token
         $Token = Get-Token $AP
-        $IrmGetSecretParams = @{
+        $Params = @{
             Uri = $Uri
             Headers = @{"X-Vault-Token"="$Token"}
         }
-        (Invoke-RestMethod @IrmGetSecretParams).data.data |
-        Select-Object -ExpandProperty $Name
-    }
-    Finally {
+        if ($Name -eq '*') {
+            (Invoke-RestMethod @Params).data.data |
+            ConvertTo-Json
+        }
+        else {
+            (Invoke-RestMethod @Params).data.data |
+            Select-Object -ExpandProperty $Name
+        }
+
         #set the token that succeeded to cache for next use
         Set-CachedToken $AP.TokenCachePath $Token
     }

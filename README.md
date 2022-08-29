@@ -48,7 +48,8 @@ $RegisterParams = @{
         Kv2Mount       = '/secret'
         Kv2Path        = '/mypath/to/keys'
         AuthType       = 'LDAP'
-        TokenCachePath = 'C:\.vault-token'
+        TokenRenewable = $true
+        TokenCachePath = 'C:\myvault\.vault-token'
         LdapCredPath   = 'C:\mycred.dat'
     }
     AllowClobber     = $true
@@ -61,4 +62,3 @@ and get the value for key 'mykey' with:
 ```pwsh
 Get-Secret -Vault 'myvault' -Name 'mykey' -AsPlainText
 ```
-

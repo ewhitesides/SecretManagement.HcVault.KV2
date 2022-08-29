@@ -10,6 +10,7 @@ internal function to make sure vault parameters are what we expect
         'Kv2Mount'
         'Kv2Path'
         'AuthType'
+        'TokenRenewable'
         'TokenCachePath'
     )
 

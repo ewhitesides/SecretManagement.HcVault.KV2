@@ -38,6 +38,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
                 Kv2Mount       = '/secret'
                 Kv2Path        = '/creds'
                 AuthType       = 'Token'
+                TokenRenewable = $true
                 TokenCachePath = $CacheFilePath
             }
             AllowClobber = $true
@@ -50,7 +51,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
         Should -Be 'supersecret'
     }
 
-    It 'given * for Name, Get-Secret should return json string' {
+    It 'given * for Name, Get-Secret should return json string containing value' {
         Get-Secret -Vault $VaultName -Name '*' -AsPlainText |
         ConvertFrom-Json |
         Select-Object -ExpandProperty 'password' |
