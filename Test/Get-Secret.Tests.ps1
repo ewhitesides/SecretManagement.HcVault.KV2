@@ -1,4 +1,6 @@
-Describe 'TokenAuthFunctions' -Tag 'Integration' {
+#Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
+
+Describe 'Get-Secret' -Tag 'Unit' {
     BeforeAll {
         #set vault environment variables
         $VaultFile = ".vault.json"
