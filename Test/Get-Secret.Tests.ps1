@@ -1,6 +1,6 @@
 #Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
 
-Describe 'Get-Secret' -Tag 'Unit' {
+Describe 'Get-Secret' -Tag 'Integration' {
     BeforeAll {
         #set vault environment variables
         $VaultFile = ".vault.json"
@@ -38,7 +38,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
                 Kv2Mount       = '/secret'
                 Kv2Path        = '/creds'
                 AuthType       = 'Token'
-                TokenRenewable = $true
+                TokenRenewable = $false #root token not renewable need to make test with another
                 TokenCachePath = $CacheFilePath
             }
             AllowClobber = $true
