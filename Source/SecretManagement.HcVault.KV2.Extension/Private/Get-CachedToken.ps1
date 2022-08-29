@@ -3,7 +3,7 @@ function Get-CachedToken([hashtable]$AP) {
     #get token from cache file
     $Output = Get-Content -Path $AP.TokenCachePath
 
-    #if $Renew is true, renew token
+    #if TokenRenewable $true, renew token
     if ($AP.TokenRenewable) {
         $Params = @{
             Method  = 'Post'
