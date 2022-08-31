@@ -1,17 +1,14 @@
 function Get-Secret {
     [CmdletBinding()]
     Param(
-        #The name of the secret as passed through from Get-Secret -Name
-        #This should be the equivalent of field arg (vault kv get -field=)
         [Parameter(Mandatory)]
+        [ValidatePattern('^/')]
         [string]$Name,
 
-        #The name of the vault as passed through SecretManagement module
         [Parameter(Mandatory)]
         [Alias('Vault')]
         [string]$VaultName,
 
-        #Parameters for vault as passed through Register-SecretVault -VaultParameters
         [Parameter(Mandatory)]
         [Alias('VaultParameters')]
         [hashtable]$AdditionalParameters
@@ -30,22 +27,24 @@ function Get-Secret {
     Test-VaultParameters $AP
 
     #Construct uri
-    $Uri = $AP.Server + $AP.ApiVersion + $AP.Kv2Mount + '/data' + $AP.Kv2Path
+    $Field = $Name | Split-Path -Leaf
+    $Paths = $Name | Split-Path -Parent
+    $Uri = $AP.Server + $AP.ApiVersion + $AP.Kv2Mount + '/data' + $Paths
 
     Try {
-        #try to get secret using cached token
+        #try to get data using cached token
         $Token = Get-CachedToken $AP
         $Params = @{
-            Uri = $Uri
+            Uri     = $Uri
             Headers = @{"X-Vault-Token"="$Token"}
         }
-        if ($Name -eq '*') {
+        if ($Field -eq '*') {
             (Invoke-RestMethod @Params).data.data |
             ConvertTo-Json
         }
         else {
             (Invoke-RestMethod @Params).data.data |
-            Select-Object -ExpandProperty $Name
+            Select-Object -ExpandProperty $Field
         }
     }
     Catch {
@@ -55,13 +54,13 @@ function Get-Secret {
             Uri = $Uri
             Headers = @{"X-Vault-Token"="$Token"}
         }
-        if ($Name -eq '*') {
+        if ($Field -eq '*') {
             (Invoke-RestMethod @Params).data.data |
             ConvertTo-Json
         }
         else {
             (Invoke-RestMethod @Params).data.data |
-            Select-Object -ExpandProperty $Name
+            Select-Object -ExpandProperty $Field
         }
 
         #set the token that succeeded to cache for next use

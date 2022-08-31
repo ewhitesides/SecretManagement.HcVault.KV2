@@ -1,21 +1,45 @@
 function Get-SecretInfo {
     [CmdletBinding()]
     param (
-        #Filter that is defined however you want to handle it. Recommend wildcards.
-        #If this is blank, you should assume the user wants to get all secretinfos in the vault
-        #This is passed in from Get-SecretInfo -Name. Note it is named different!
+        [Parameter(Mandatory)]
         [Alias('Name')]
         [string]$Filter,
 
-        #The VaultName of the secret, passed through from SecretManagement module
         [Parameter(Mandatory)]
         [Alias('Vault')]
         [string]$VaultName,
 
-        #Passed in from SecretManagement registered VaultParameters.
         [Parameter(Mandatory)]
         [Alias('VaultParameters')]
-        [hashtable]$AdditionalParameters = (Get-SecretVault -Name $VaultName).VaultParameters
+        [hashtable]$AdditionalParameters
     )
-    Throw "not implemented"
+
+    #stop on all non-terminating errors in addition to terminating
+    $ErrorActionPreference = 'Stop'
+
+    #message
+    Write-Information "Getting secret info $Name from vault $VaultName"
+
+    #set AdditionalParameters to shorter variable to stay within 80 column
+    $AP = $AdditionalParameters
+
+    #Validate AdditionalParameters
+    Test-VaultParameters $AP
+
+    #Construct uri
+    $Uri = $AP.Server + $AP.ApiVersion + $AP.Kv2Mount + '/metadata'
+
+    # Try {
+        #try to get metadata using cached token
+    $Token = Get-CachedToken $AP
+    New-SecretInfoObj -VaultName $VaultName -Uri $Uri -Token $Token -Depth 0
+    # }
+    # Catch {
+    #     #if it fails, try with a fresh token
+    #     $Token      = Get-Token $AP
+    #     New-SecretInfoObj
+
+    #     #set the token that succeeded to cache for next use
+    #     Set-CachedToken $AP.TokenCachePath $Token
+    # }
 }

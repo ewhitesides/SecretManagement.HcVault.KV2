@@ -8,7 +8,6 @@ internal function to make sure vault parameters are what we expect
         'Server'
         'ApiVersion'
         'Kv2Mount'
-        'Kv2Path'
         'AuthType'
         'TokenRenewable'
         'TokenCachePath'

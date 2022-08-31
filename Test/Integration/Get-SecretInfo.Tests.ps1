@@ -1,7 +1,7 @@
 #Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
 #Requires -Modules @{ModuleName='Microsoft.PowerShell.SecretManagement';ModuleVersion='1.1.2'}
 
-Describe 'Get-Secret' -Tag 'Integration' {
+Describe 'Get-SecretInfo' -Tag 'Integration' {
     BeforeAll {
         #add this extension module to modulepath via symbolic link
         #so Microsoft.PowerShell.SecretManagement module can see it
@@ -65,17 +65,5 @@ Describe 'Get-Secret' -Tag 'Integration' {
 
         #remove secrets at path creds
         Invoke-Expression "vault kv metadata delete -mount=$VaultMount $VaultPath"
-    }
-
-    It 'given specific key for Name, Get-Secret should return the value' {
-        Get-Secret -Vault $VaultName -Name $VaultKey -AsPlainText |
-        Should -Be $VaultVal
-    }
-
-    It 'given * for Name, Get-Secret should return json string containing value' {
-        Get-Secret -Vault $VaultName -Name '*' -AsPlainText |
-        ConvertFrom-Json |
-        Select-Object -ExpandProperty $VaultKey |
-        Should -Be $VaultVal
     }
 }

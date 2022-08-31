@@ -1,8 +1,12 @@
 #Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
+#Requires -Modules @{ModuleName='Microsoft.PowerShell.SecretManagement';ModuleVersion='1.1.2'}
 
-Describe 'Get-Secret' -Tag 'Unit' {
+Describe 'Get-SecretInfo' -Tag 'Unit' {
     BeforeAll {
-        #Import Get-Secret as Get-ExtSecret from the Extension's Nested Module,
+        #import parent module because it contains some types that we need for testing
+        Import-Module 'Microsoft.PowerShell.SecretManagement'
+
+        #Import Get-SecretInfo as Get-ExtSecretInfo from the Extension's Nested Module,
         #to avoid confusion with Get-Secret from Microsoft.PowerShell.SecretManagement
         $NestedModuleName = (
             Get-ChildItem -Path '../../Source' |
@@ -23,7 +27,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
         #vault vars
         $VaultName     = 'pestertestvault'
         $VaultMount    = 'secret'
-        $VaultPath     = '/creds'
+        $VaultPath     = 'creds'
         $VaultKey      = 'mypass'
         $VaultVal      = 'mysecret'
         $CacheDir      = "$env:HOME/$VaultName"
@@ -43,6 +47,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
                 Server         = $env:VAULT_ADDR
                 ApiVersion     = '/v1'
                 Kv2Mount       = "/$VaultMount"
+                Kv2Path        = "/$VaultPath"
                 AuthType       = 'Token'
                 TokenRenewable = $false #root token not renewable need to make test with another
                 TokenCachePath = $CacheFilePath
@@ -57,15 +62,8 @@ Describe 'Get-Secret' -Tag 'Unit' {
         Invoke-Expression "vault kv metadata delete -mount=$VaultMount $VaultPath"
     }
 
-    It 'should get the field value when Name parameter ends with the field key' {
-        Get-ExtSecret -Name "$VaultPath/$VaultKey" @Params |
-        Should -Be $VaultVal
-    }
-
-    It 'should return parseable json when Name parameter ends with an asterisk' {
-        Get-ExtSecret -Name "$VaultPath/*" @Params |
-        ConvertFrom-Json |
-        Select-Object -ExpandProperty $VaultKey |
-        Should -Be $VaultVal
+    It 'should get the secret info successfully' {
+        Get-ExtSecretInfo -Name '/*' @Params |
+        Should -Be 'mysecret'
     }
 }
