@@ -1,6 +1,10 @@
 # SecretManagement.HcVault.KV2
 
-basic outline of a hashicorp vault extension for powershell credentialmanager module
+hashicorp vault extension for powershell credential manager module
+
+## Development Info
+
+the code is currently being developed/tested with hashicorp vault version 1.11.0
 
 ## Development Setup
 
