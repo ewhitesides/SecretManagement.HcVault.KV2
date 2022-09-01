@@ -41,17 +41,9 @@ function New-SecretInfoObj([string]$VaultName,[string]$Uri,[string]$Token,[int]$
                 $SubKeyUri += $Key
             }
 
-            $MetaDataResponse = (
+            $MetaData = (
                 Invoke-RestMethod -Uri $SubKeyUri -Headers @{"X-Vault-Token"="$Token"}
-            ).data.metadata
-
-            [ReadOnlyDictionary[String,Object]]$MetaData = [ordered]@{
-                created_time    = $MetaDataResponse.created_time
-                custom_metadata = $MetaDataResponse.custom_metadata
-                deletion_time   = $MetaDataResponse.deletion_time
-                destroyed       = $MetaDataResponse.destroyed
-                version         = $MetaDataResponse.version
-            } | ConvertTo-ReadOnlyDictionary
+            ).data.metadata | ConvertTo-ReadOnlyDict
 
             $SubKeys = (
                 Invoke-RestMethod -Uri $SubKeyUri -Headers @{"X-Vault-Token"="$Token"}
@@ -59,16 +51,18 @@ function New-SecretInfoObj([string]$VaultName,[string]$Uri,[string]$Token,[int]$
 
             if ($SubKeys) {
                 ForEach ($SubKey in $SubKeys) {
-                    [String]$SecretName     = "$SubKeyUri/$SubKey".Split('/')[-($Depth+2)..-1] -join '/'
-                    [Microsoft.PowerShell.SecretManagement.SecretType]$SecretType = 'String'
+                    $SecretName = "$SubKeyUri/$SubKey".Split('/')[-($Depth+2)..-1] |
+                        Join-String -Separator '/' -OutputPrefix '/'
+                    $SecretType = [Microsoft.PowerShell.SecretManagement.SecretType]::String
                     [Microsoft.PowerShell.SecretManagement.SecretInformation]::new(
                         $SecretName, $SecretType, $VaultName, $MetaData
                     )
                 }
             }
             else {
-                [String]$SecretName     = $SubKeyUri.Split('/')[-($Depth+2)..-1] -join '/'
-                [Microsoft.PowerShell.SecretManagement.SecretType]$SecretType = 'String'
+                $SecretName = $SubKeyUri.Split('/')[-($Depth+2)..-1] |
+                    Join-String -Separator '/' -OutputPrefix '/'
+                $SecretType = [Microsoft.PowerShell.SecretManagement.SecretType]::String
                 [Microsoft.PowerShell.SecretManagement.SecretInformation]::new(
                     $SecretName, $SecretType, $VaultName, $MetaData
                 )

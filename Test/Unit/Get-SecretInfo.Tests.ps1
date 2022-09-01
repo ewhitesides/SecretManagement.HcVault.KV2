@@ -3,8 +3,9 @@
 
 Describe 'Get-SecretInfo' -Tag 'Unit' {
     BeforeAll {
-        #import parent module because it contains some types that we need for testing
-        Import-Module 'Microsoft.PowerShell.SecretManagement'
+        #import parent module - some of tests and Get-ExtSecretInfo require its classes
+        $ParentModuleName = 'Microsoft.PowerShell.SecretManagement'
+        Import-Module -Name $ParentModuleName
 
         #Import Get-SecretInfo as Get-ExtSecretInfo from the Extension's Nested Module,
         #to avoid confusion with Get-Secret from Microsoft.PowerShell.SecretManagement
@@ -25,13 +26,13 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
         $env:VAULT_TOKEN = $VaultJson.VAULT_TOKEN
 
         #vault vars
-        $VaultName     = 'pestertestvault'
-        $VaultMount    = 'secret'
-        $VaultPath     = 'creds'
-        $VaultKey      = 'mypass'
-        $VaultVal      = 'mysecret'
-        $CacheDir      = "$env:HOME/$VaultName"
-        $CacheFilePath = "$env:HOME/$VaultName/.vault-token"
+        $VaultName        = 'pestertestvault'
+        $VaultMount       = 'secret'
+        $Script:VaultPath = 'creds'
+        $Script:VaultKey  = 'mypass'
+        $VaultVal         = 'mysecret'
+        $CacheDir         = "$env:HOME/$VaultName"
+        $CacheFilePath    = "$env:HOME/$VaultName/.vault-token"
 
         #set token
         New-Item -ItemType 'Directory' -Path $CacheDir -Force | Out-Null
@@ -41,7 +42,7 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
         Invoke-Expression "vault kv put -mount=$VaultMount $VaultPath $VaultKey=$VaultVal"
 
         #set parameters that are fed to Get-ExtSecret function
-        $Script:Params = @{
+        $Params = @{
             VaultName = $VaultName
             AdditionalParameters = @{
                 Server         = $env:VAULT_ADDR
@@ -53,6 +54,7 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
                 TokenCachePath = $CacheFilePath
             }
         }
+        $Script:Output = Get-ExtSecretInfo -Name '*' @Params
     }
     AfterAll {
         #remove cache file and dir
@@ -60,10 +62,26 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
 
         #remove secrets at path creds
         Invoke-Expression "vault kv metadata delete -mount=$VaultMount $VaultPath"
+
+        #remove modules from memory
+        Remove-Module -Name $NestedModuleName
+        Remove-Module -Name $ParentModuleName
     }
 
-    It 'should get the secret info successfully' {
-        Get-ExtSecretInfo -Name '/*' @Params |
-        Should -Be 'mysecret'
+    It 'should return objects of type SecretInformation' {
+        $Output -is [Microsoft.PowerShell.SecretManagement.SecretInformation] |
+        Should -Be $true
+    }
+
+    It 'should return the correct Name property' {
+        $Output.Name | Should -Be "/$VaultPath/$VaultKey"
+    }
+
+    It 'should return the correct Type property' {
+        $Output.Type | Should -Be 'String'
+    }
+
+    It 'should return the correct VaultName property' {
+        $Output.VaultName | Should -Be $VaultName
     }
 }

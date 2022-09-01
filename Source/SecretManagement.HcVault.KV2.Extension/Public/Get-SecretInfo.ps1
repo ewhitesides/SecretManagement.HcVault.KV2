@@ -29,17 +29,17 @@ function Get-SecretInfo {
     #Construct uri
     $Uri = $AP.Server + $AP.ApiVersion + $AP.Kv2Mount + '/metadata'
 
-    # Try {
-        #try to get metadata using cached token
-    $Token = Get-CachedToken $AP
-    New-SecretInfoObj -VaultName $VaultName -Uri $Uri -Token $Token -Depth 0
-    # }
-    # Catch {
-    #     #if it fails, try with a fresh token
-    #     $Token      = Get-Token $AP
-    #     New-SecretInfoObj
+    Try {
+        #try to get secret info using cached token
+        $Token = Get-CachedToken $AP
+        New-SecretInfoObj -VaultName $VaultName -Uri $Uri -Token $Token -Depth 0
+    }
+    Catch {
+        #if it fails, try with a fresh token
+        $Token = Get-Token $AP
+        New-SecretInfoObj -VaultName $VaultName -Uri $Uri -Token $Token -Depth 0
 
-    #     #set the token that succeeded to cache for next use
-    #     Set-CachedToken $AP.TokenCachePath $Token
-    # }
+        #set the token that succeeded to cache for next use
+        Set-CachedToken $AP.TokenCachePath $Token
+    }
 }
