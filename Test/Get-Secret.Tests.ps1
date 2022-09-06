@@ -4,7 +4,7 @@
 Describe 'Get-Secret' -Tag 'Unit' {
     BeforeAll {
         #Import Get-Secret as Get-ExtSecret from the Extension's Nested Module,
-        #to avoid confusion with Get-Secret from Microsoft.PowerShell.SecretManagement
+        #to avoid confusion with Get-Secret from SecretManagement module
         $NestedModuleName = (
             Get-ChildItem -Path '../Source' |
             Where-Object {$_.Name -match 'Extension$'}
