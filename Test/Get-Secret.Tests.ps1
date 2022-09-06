@@ -37,7 +37,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
         #set a test secret with vault cli
         Invoke-Expression "vault kv put -mount=$VaultMount $VaultPath $VaultKey=$VaultVal"
 
-        #set parameters that are fed to Get-ExtSecret function
+        #set parameters for Get-ExtSecret
         $Script:Params = @{
             VaultName = $VaultName
             AdditionalParameters = @{
