@@ -43,7 +43,7 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
 
         #set parameters that are fed to Get-ExtSecret function
         $Params = @{
-            VaultName = $VaultName
+            VaultName            = $VaultName
             AdditionalParameters = @{
                 Server         = $env:VAULT_ADDR
                 ApiVersion     = '/v1'
