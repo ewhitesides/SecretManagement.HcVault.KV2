@@ -23,7 +23,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
         #vault vars
         $VaultName     = 'pestertestvault'
         $VaultMount    = 'secret'
-        $VaultPath     = '/creds'
+        $VaultPath     = 'creds'
         $VaultKey      = 'mypass'
         $VaultVal      = 'mysecret'
         $CacheDir      = "$env:HOME/$VaultName"
@@ -58,12 +58,12 @@ Describe 'Get-Secret' -Tag 'Unit' {
     }
 
     It 'should get the field value when Name parameter ends with the field key' {
-        Get-ExtSecret -Name "$VaultPath/$VaultKey" @Params |
+        Get-ExtSecret -Name "/$VaultPath/$VaultKey" @Params |
         Should -Be $VaultVal
     }
 
     It 'should return parseable json when Name parameter ends with an asterisk' {
-        Get-ExtSecret -Name "$VaultPath/*" @Params |
+        Get-ExtSecret -Name "/$VaultPath/*" @Params |
         ConvertFrom-Json |
         Select-Object -ExpandProperty $VaultKey |
         Should -Be $VaultVal
