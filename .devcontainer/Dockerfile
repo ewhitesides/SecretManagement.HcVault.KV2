@@ -10,11 +10,6 @@ RUN version='1.11.0'; \
     unzip "vault_${version}_linux_amd64.zip" && \
     mv vault /usr/local/bin && chmod +x /usr/local/bin/vault
 
-#install starship
-RUN sudo apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && sudo apt-get -y install --no-install-recommends fonts-firacode && \
-    wget https://starship.rs/install.sh && chmod +x install.sh && ./install.sh --yes && rm install.sh
-
 #handy utilities
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y install --no-install-recommends tree

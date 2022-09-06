@@ -24,7 +24,7 @@
 	// "postCreateCommand": "uname -a",
 
 	// post start commands
-	"postStartCommand": "./.devcontainer/load_starship.sh && ./.devcontainer/new_vaultfile.sh",
+	"postStartCommand": "./.devcontainer/new_vaultfile.sh",
 
 	// post attach commands
 	"postAttachCommand": "./.devcontainer/install_psmodules.sh",
