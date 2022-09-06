@@ -1,6 +1,11 @@
 #Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
 #Requires -Modules @{ModuleName='Microsoft.PowerShell.SecretManagement';ModuleVersion='1.1.2'}
 
+#Supress the following PSScriptAnalyzer warnings
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "")]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingInvokeExpression", "")]
+Param()
+
 Describe 'Get-Secret' -Tag 'Unit' {
     BeforeAll {
         #Import Get-Secret as Get-ExtSecret from the Extension's Nested Module,
@@ -38,7 +43,7 @@ Describe 'Get-Secret' -Tag 'Unit' {
         Invoke-Expression "vault kv put -mount=$VaultMount $VaultPath $VaultKey=$VaultVal"
 
         #set parameters for Get-ExtSecret
-        $Script:Params = @{
+        $Params = @{
             VaultName            = $VaultName
             AdditionalParameters = @{
                 Server         = $env:VAULT_ADDR
@@ -95,13 +100,13 @@ Describe 'Get-Secret' -Tag 'Integration' {
         $env:VAULT_TOKEN = $VaultJson.VAULT_TOKEN
 
         #vault vars
-        $VaultName       = 'pestertestvault'
-        $VaultMount      = 'secret'
-        $VaultPath       = 'creds'
-        $Script:VaultKey = 'mypass'
-        $Script:VaultVal = 'mysecret'
-        $CacheDir        = "$env:HOME/$VaultName"
-        $CacheFilePath   = "$env:HOME/$VaultName/.vault-token"
+        $VaultName     = 'pestertestvault'
+        $VaultMount    = 'secret'
+        $VaultPath     = 'creds'
+        $VaultKey      = 'mypass'
+        $VaultVal      = 'mysecret'
+        $CacheDir      = "$env:HOME/$VaultName"
+        $CacheFilePath = "$env:HOME/$VaultName/.vault-token"
 
         #set token
         New-Item -ItemType 'Directory' -Path $CacheDir -Force | Out-Null
