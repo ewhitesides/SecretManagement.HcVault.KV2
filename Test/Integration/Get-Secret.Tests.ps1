@@ -38,7 +38,7 @@ Describe 'Get-Secret' -Tag 'Integration' {
         Invoke-Expression "vault kv put -mount=$VaultMount $VaultPath $VaultKey=$VaultVal"
 
         #register a test vault
-        $RegisterParams = @{
+        $Params = @{
             Name   = $VaultName
             Module = $ModuleName
             VaultParameters = @{
@@ -51,7 +51,7 @@ Describe 'Get-Secret' -Tag 'Integration' {
             }
             AllowClobber = $true
         }
-        Register-SecretVault @RegisterParams
+        Register-SecretVault @Params
     }
     AfterAll {
         #unregister vault
@@ -68,12 +68,12 @@ Describe 'Get-Secret' -Tag 'Integration' {
     }
 
     It 'given specific key for Name, Get-Secret should return the value' {
-        Get-Secret -Vault $VaultName -Name $VaultKey -AsPlainText |
+        Get-Secret -Vault $VaultName -Name "/$VaultPath/$VaultKey" -AsPlainText |
         Should -Be $VaultVal
     }
 
     It 'given * for Name, Get-Secret should return json string containing value' {
-        Get-Secret -Vault $VaultName -Name '*' -AsPlainText |
+        Get-Secret -Vault $VaultName -Name "/$VaultPath/*" -AsPlainText |
         ConvertFrom-Json |
         Select-Object -ExpandProperty $VaultKey |
         Should -Be $VaultVal

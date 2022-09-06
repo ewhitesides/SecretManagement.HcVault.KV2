@@ -38,7 +38,7 @@ Describe 'Get-SecretInfo' -Tag 'Integration' {
         Invoke-Expression "vault kv put -mount=$VaultMount $VaultPath $VaultKey=$VaultVal"
 
         #register a test vault
-        $RegisterParams = @{
+        $Params = @{
             Name   = $VaultName
             Module = $ModuleName
             VaultParameters = @{
@@ -51,7 +51,9 @@ Describe 'Get-SecretInfo' -Tag 'Integration' {
             }
             AllowClobber = $true
         }
-        Register-SecretVault @RegisterParams
+        Register-SecretVault @Params
+
+        $Script:Output = Get-SecretInfo -Name '*'
     }
     AfterAll {
         #unregister vault
@@ -65,5 +67,27 @@ Describe 'Get-SecretInfo' -Tag 'Integration' {
 
         #remove secrets at path creds
         Invoke-Expression "vault kv metadata delete -mount=$VaultMount $VaultPath"
+    }
+
+    It 'should return objects of type SecretInformation' {
+        $Output -is [Microsoft.PowerShell.SecretManagement.SecretInformation] |
+        Should -Be $true
+    }
+
+    It 'should return correct Name' {
+        $Output.Name | Should -Be "/$VaultPath/$VaultKey"
+    }
+
+    It 'should return correct Type' {
+        $Output.Type | Should -Be 'string'
+    }
+
+    It 'should return correct VaultName' {
+        $Output.VaultName | Should -Be $VaultName
+    }
+
+    It 'should return a Metadata.created_time property' {
+        $Output.Metadata.created_time |
+        Should -Be -Not NullOrEmpty
     }
 }

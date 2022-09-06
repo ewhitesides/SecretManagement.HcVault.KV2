@@ -73,19 +73,19 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
         Should -Be $true
     }
 
-    It 'should return Name property' {
+    It 'should return correct Name' {
         $Output.Name | Should -Be "/$VaultPath/$VaultKey"
     }
 
-    It 'should return Type property' {
+    It 'should return correct Type' {
         $Output.Type | Should -Be 'String'
     }
 
-    It 'should return VaultName property' {
+    It 'should return correct VaultName' {
         $Output.VaultName | Should -Be $VaultName
     }
 
-    It 'should return Metadata.created_time property' {
+    It 'should return a Metadata.created_time property' {
         $Output.Metadata.created_time |
         Should -Be -Not NullOrEmpty
     }
