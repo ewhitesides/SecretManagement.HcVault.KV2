@@ -54,8 +54,11 @@ Describe 'Get-Secret' -Tag 'Unit' {
         #remove cache file and dir
         Remove-Item -Path $CacheDir -Recurse -Force
 
-        #remove secrets at path creds
+        #remove secrets at path $VaultPath
         Invoke-Expression "vault kv metadata delete -mount=$VaultMount $VaultPath"
+
+        #remove module from memory
+        Remove-Module -Name $NestedModuleName
     }
 
     It 'should get the field value when Name parameter ends with the field key' {
