@@ -1,6 +1,11 @@
 #Requires -Modules @{ModuleName='Pester';ModuleVersion='5.3.3'}
 #Requires -Modules @{ModuleName='Microsoft.PowerShell.SecretManagement';ModuleVersion='1.1.2'}
 
+#Supress the following PSScriptAnalyzer warnings
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "")]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingInvokeExpression", "")]
+Param()
+
 Describe 'Get-SecretInfo' -Tag 'Unit' {
     BeforeAll {
         #import parent module - some of tests and Get-ExtSecretInfo require its classes
@@ -26,13 +31,13 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
         $env:VAULT_TOKEN = $VaultJson.VAULT_TOKEN
 
         #vault vars
-        $VaultName        = 'pestertestvault'
-        $VaultMount       = 'secret'
-        $Script:VaultPath = 'creds'
-        $Script:VaultKey  = 'mypass'
-        $VaultVal         = 'mysecret'
-        $CacheDir         = "$env:HOME/$VaultName"
-        $CacheFilePath    = "$env:HOME/$VaultName/.vault-token"
+        $VaultName     = 'pestertestvault'
+        $VaultMount    = 'secret'
+        $VaultPath     = 'creds'
+        $VaultKey      = 'mypass'
+        $VaultVal      = 'mysecret'
+        $CacheDir      = "$env:HOME/$VaultName"
+        $CacheFilePath = "$env:HOME/$VaultName/.vault-token"
 
         #set token
         New-Item -ItemType 'Directory' -Path $CacheDir -Force | Out-Null
@@ -53,7 +58,7 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
                 TokenCachePath = $CacheFilePath
             }
         }
-        $Script:Output = Get-ExtSecretInfo -Name '*' @Params
+        $Output = Get-ExtSecretInfo -Name '*' @Params
     }
     AfterAll {
         #remove cache file and dir
@@ -111,13 +116,13 @@ Describe 'Get-SecretInfo' -Tag 'Integration' {
         $env:VAULT_TOKEN = $VaultJson.VAULT_TOKEN
 
         #vault vars
-        $VaultName       = 'pestertestvault'
-        $VaultMount      = 'secret'
-        $VaultPath       = 'creds'
-        $Script:VaultKey = 'mypass'
-        $Script:VaultVal = 'mysecret'
-        $CacheDir        = "$env:HOME/$VaultName"
-        $CacheFilePath   = "$env:HOME/$VaultName/.vault-token"
+        $VaultName     = 'pestertestvault'
+        $VaultMount    = 'secret'
+        $VaultPath     = 'creds'
+        $VaultKey      = 'mypass'
+        $VaultVal      = 'mysecret'
+        $CacheDir      = "$env:HOME/$VaultName"
+        $CacheFilePath = "$env:HOME/$VaultName/.vault-token"
 
         #set token
         New-Item -ItemType 'Directory' -Path $CacheDir -Force | Out-Null
@@ -142,7 +147,7 @@ Describe 'Get-SecretInfo' -Tag 'Integration' {
         }
         Register-SecretVault @Params
 
-        $Script:Output = Get-SecretInfo -Name '*'
+        $Output = Get-SecretInfo -Name '*'
     }
     AfterAll {
         #unregister vault
