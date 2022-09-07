@@ -1,7 +1,8 @@
 function Remove-Secret {
 <#
 .DESCRIPTION
-curl --header "X-Vault-Token: xxx" --request DELETE http://127.0.0.1:8200/v1/secret/data/creds
+removes the latest version of a secret at the given path
+https://www.vaultproject.io/api-docs/secret/kv/kv-v2#delete-latest-version-of-secret
 #>
     param (
         [Parameter(Mandatory)]
