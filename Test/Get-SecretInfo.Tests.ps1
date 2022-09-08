@@ -78,11 +78,11 @@ Describe 'Get-SecretInfo' -Tag 'Unit' {
     }
 
     It 'should return correct Name' {
-        $Output.Name | Should -Be "/$VaultPath/$VaultKey"
+        $Output.Name | Should -Be "/$VaultPath"
     }
 
     It 'should return correct Type' {
-        $Output.Type | Should -Be 'String'
+        $Output.Type | Should -Be 'Hashtable'
     }
 
     It 'should return correct VaultName' {
@@ -169,11 +169,11 @@ Describe 'Get-SecretInfo' -Tag 'Integration' {
     }
 
     It 'should return correct Name' {
-        $Output.Name | Should -Be "/$VaultPath/$VaultKey"
+        $Output.Name | Should -Be "/$VaultPath"
     }
 
     It 'should return correct Type' {
-        $Output.Type | Should -Be 'string'
+        $Output.Type | Should -Be 'Hashtable'
     }
 
     It 'should return correct VaultName' {
