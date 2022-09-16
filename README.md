@@ -1,28 +1,37 @@
 # SecretManagement.HcVault.KV2
 
-hashicorp vault extension for powershell credential manager module
+hashicorp vault kv2 extension for powershell credential manager module
 
-## Development Info
+## Setup
 
-the code is currently being developed/tested with hashicorp vault version 1.11.0
-
-## Development Setup
-
-the following assumes you have docker desktop and vscode installed on your machine
-
-clone code
-
-open code with 'devcontainer open .'
-
-once loaded, load env vars for test instance of vault with '. $LOCALDEV'
-
-## Usage
-
-### install Powershell SecretManagement module
+### install Powershell SecretManagement module and this module
 
 ```pwsh
-Install-Module Microsoft.PowerShell.SecretManagement -Scope 'AllUsers' -Force
+Install-Module Microsoft.PowerShell.SecretManagement
+Install-Module SecretManagement.HcVault.KV2
 ```
+
+## Use Examples
+
+### Get-Secret
+
+add info here
+
+### Get-SecretInfo
+
+add info here
+
+### Set-Secret
+
+add info here
+
+### Remove-Secret
+
+add info here
+
+### Test-SecretVault
+
+add info here
 
 ### Register the vault
 
@@ -66,6 +75,35 @@ and get the value for key 'mykey' with:
 Get-Secret -Vault 'myvault' -Name '/mypath/to/keys/mykey' -AsPlainText
 ```
 
+## Development Info
+
+the code is currently being developed/tested with hashicorp vault version 1.11.0
+
+the following assumes you have docker desktop and vscode installed on your machine
+
+```bash
+clone code
+open code with 'devcontainer open .'
+```
+
+pester tests are designed should be run from developement container, with cwd set to Test:
+
+```bash
+cd Test
+invoke-pester -tagfilter 'unit'
+```
+
+unit tests are run from the perspective of the custom extension module
+
+integration tests are run from the perspective of the parent SecretManagement module
+
 ## TODO
 
-add todos here
+- update README for Get-Secret
+- update README for Get-SecretInfo
+- update README for Set-Secret
+- implement Set-SecretInfo
+- implement Set-Secret -Metadata (using Set-SecretInfo)
+- add code for metadata parameter in Set-Secret
+- add tests for metadata parameter in Set-Secret
+- add simple ldap server into the container so we can test ldap auth
