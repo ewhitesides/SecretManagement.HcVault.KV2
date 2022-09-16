@@ -23,7 +23,7 @@ $Params = @{
     Name   = 'myvault'
     Module = 'SecretManagement.HcVault.KV2'
     VaultParameters = @{
-        Server         = 'http://127.0.0.1:8200
+        Server         = 'http://127.0.0.1:8200'
         ApiVersion     = '/v1'
         Kv2Mount       = '/secret'
         AuthType       = 'Token'
@@ -63,48 +63,6 @@ add info here
 ### Test-SecretVault
 
 add info here
-
-### Register the vault
-
-if for example your are currently doing the following with the vault cli:
-
-```bash
-vault login -method=ldap username=<user>
-vault kv get -mount=secret -field=mykey mypath/to/keys
-```
-
-then you should first set a credential file
-
-```pwsh
-$a = Get-Credential
-$a | Export-Clixml -Path 'C:\mycred.dat'
-```
-
-then you would want to register the vault as:
-
-```pwsh
-$RegisterParams = @{
-    Name            = 'myvault'
-    Module          = 'SecretManagement.HcVault.KV2'
-    VaultParameters = @{
-        Server         = 'https://myvault.com'
-        ApiVersion     = '/v1'
-        Kv2Mount       = '/secret'
-        AuthType       = 'LDAP'
-        TokenRenewable = $true
-        TokenCachePath = 'C:\myvault\.vault-token'
-        LdapCredPath   = 'C:\mycred.dat'
-    }
-    AllowClobber     = $true
-}
-Register-SecretVault @RegisterParams
-```
-
-and get the value for key 'mykey' with:
-
-```pwsh
-Get-Secret -Vault 'myvault' -Name '/mypath/to/keys/mykey' -AsPlainText
-```
 
 ## Development Info
 
