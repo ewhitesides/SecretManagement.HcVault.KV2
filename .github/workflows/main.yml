@@ -27,7 +27,7 @@ jobs:
       - name: publish
         env:
           APIKEY: ${{ secrets.PSGalleryKey }}
-        working-directory: ./SecretManagement.HcVault.KV2/Source
+        working-directory: Source
         run: |
             Install-Module PowershellGet -Force -AllowPreRelease
             Remove-Module PowershellGet; Import-Module PowershellGet
