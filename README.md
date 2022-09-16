@@ -20,8 +20,8 @@ for example $env:USERPROFILE/myvault/.vault-token
 
 ```pwsh
 $Params = @{
-    Name           = 'myvault'
-    Module         = 'SecretManagement.HcVault.KV2'
+    Name   = 'myvault'
+    Module = 'SecretManagement.HcVault.KV2'
     VaultParameters = @{
         Server         = 'http://127.0.0.1:8200
         ApiVersion     = '/v1'
