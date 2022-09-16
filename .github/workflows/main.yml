@@ -31,5 +31,4 @@ jobs:
         run: |
             Install-Module PowershellGet -Force -AllowPreRelease
             Remove-Module PowershellGet; Import-Module PowershellGet
-        run: |
             Publish-PSResource -Path . -ApiKey $env:APIKEY
