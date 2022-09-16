@@ -11,11 +11,39 @@ Install-Module Microsoft.PowerShell.SecretManagement
 Install-Module SecretManagement.HcVault.KV2
 ```
 
-## Use Examples
+## Usage Examples
+
+### Register Vault with token in local file
+
+set a token in a file somewhere on your system,
+for example $env:USERPROFILE/myvault/.vault-token
+
+```pwsh
+$AdditionalParameters = @{
+    Server         = 'http://127.0.0.1:8200
+    ApiVersion     = '/v1'
+    Kv2Mount       = '/secret'
+    AuthType       = 'Token'
+    TokenRenewable = $false #set to true if token is renewable
+    TokenCachePath = "$env:USERPROFILE/myvault/.vault-token"
+}
+
+Register-SecretVault -Name 'myvault' -Module 'SecretManagement.HcVault.KV2'
+```
 
 ### Get-Secret
 
-add info here
+example of accessing a secret stored at 'http://127.0.0.1:8200/v1/secret/myapp/user1'
+
+```pwsh
+Get-Secret -Vault 'myvault' -Name '/myapp/user1' -AsPlainText
+```
+
+example of getting a hashtable of all stored at 'http://127.0.0.1:8200/v1/secret/myapp'
+
+```pwsh
+Get-Secret -Vault 'myvault' -Name '/myapp/*' -AsPlainText
+```
 
 ### Get-SecretInfo
 
