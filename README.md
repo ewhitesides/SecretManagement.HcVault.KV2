@@ -13,7 +13,7 @@ Install-Module SecretManagement.HcVault.KV2
 
 ## Usage Examples
 
-### Register Vault with token in local file
+### Register Vault with local token file
 
 set a token in a file somewhere on your system,
 for example $env:USERPROFILE/myvault/.vault-token
