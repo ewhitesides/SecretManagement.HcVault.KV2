@@ -19,16 +19,19 @@ set a token in a file somewhere on your system,
 for example $env:USERPROFILE/myvault/.vault-token
 
 ```pwsh
-$AdditionalParameters = @{
-    Server         = 'http://127.0.0.1:8200
-    ApiVersion     = '/v1'
-    Kv2Mount       = '/secret'
-    AuthType       = 'Token'
-    TokenRenewable = $false #set to true if token is renewable
-    TokenCachePath = "$env:USERPROFILE/myvault/.vault-token"
+$Params = @{
+    Name           = 'myvault'
+    Module         = 'SecretManagement.HcVault.KV2'
+    VaultParameters = @{
+        Server         = 'http://127.0.0.1:8200
+        ApiVersion     = '/v1'
+        Kv2Mount       = '/secret'
+        AuthType       = 'Token'
+        TokenRenewable = $false #set to true if token is renewable
+        TokenCachePath = "$env:USERPROFILE/myvault/.vault-token"
+    }
 }
-
-Register-SecretVault -Name 'myvault' -Module 'SecretManagement.HcVault.KV2'
+Register-SecretVault @Params
 ```
 
 ### Get-Secret
