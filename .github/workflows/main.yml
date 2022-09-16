@@ -23,12 +23,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
+      # Publish to PSGallery, only if local version is greater than the online version
       - name: publish
         env:
           APIKEY: ${{ secrets.PSGalleryKey }}
         working-directory: Source
         run: |
+            $OnlineVersion = (Find-Module 'SecretManagement.HcVault.KV2').Version
+            $LocalVersion  = (Import-PowerShellDataFile SecretManagement.HcVault.KV2.psd1).ModuleVersion
+            if ($LocalVersion -le $OnlineVersion) {return}
             Install-Module PowershellGet -Force -AllowPreRelease
             Remove-Module PowershellGet; Import-Module PowershellGet
             Publish-PSResource -Path . -ApiKey $env:APIKEY
