@@ -40,7 +40,7 @@ function Get-Secret {
         }
         if ($Field -eq '*') {
             (Invoke-RestMethod @Params).data.data |
-            ConvertTo-Json
+            ConvertTo-HashTable
         }
         else {
             (Invoke-RestMethod @Params).data.data |
@@ -56,7 +56,7 @@ function Get-Secret {
         }
         if ($Field -eq '*') {
             (Invoke-RestMethod @Params).data.data |
-            ConvertTo-Json
+            ConvertTo-HashTable
         }
         else {
             (Invoke-RestMethod @Params).data.data |

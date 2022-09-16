@@ -66,15 +66,23 @@ Describe 'Get-Secret' -Tag 'Unit' {
         Remove-Module -Name $NestedModuleName
     }
 
-    It 'should get the field value when Name parameter ends with the field key' {
+    It 'should return value of type string when Name arg ends with the key' {
+        $Output = Get-ExtSecret -Name "/$VaultPath/$VaultKey" @Params
+        $Output -is [string] | Should -Be $true
+    }
+
+    It 'should get the value when Name arg ends with the key' {
         Get-ExtSecret -Name "/$VaultPath/$VaultKey" @Params |
         Should -Be $VaultVal
     }
 
-    It 'should return parseable json when Name parameter ends with an asterisk' {
-        Get-ExtSecret -Name "/$VaultPath/*" @Params |
-        ConvertFrom-Json |
-        Select-Object -ExpandProperty $VaultKey |
+    It 'should return value of type hashtable when Name arg ends with asterisk' {
+        $Output = Get-ExtSecret -Name "/$VaultPath/*" @Params
+        $Output -is [hashtable] | Should -Be $true
+    }
+
+    It 'should parse the value when Name arg ends with asterisk' {
+        (Get-ExtSecret -Name "/$VaultPath/*" @Params).$VaultKey |
         Should -Be $VaultVal
     }
 }
@@ -145,14 +153,23 @@ Describe 'Get-Secret' -Tag 'Integration' {
         Invoke-Expression "vault kv metadata delete -mount=$VaultMount $VaultPath"
     }
 
-    It 'given specific key for Name, Get-Secret should return the value' {
+    It 'should return value of type string when Name arg ends with the key' {
+        $Output = Get-Secret -Vault $VaultName -Name "/$VaultPath/$VaultKey" -AsPlainText
+        $Output -is [string] | Should -Be $true
+    }
+
+    It 'should get the value when Name arg ends with the key' {
         Get-Secret -Vault $VaultName -Name "/$VaultPath/$VaultKey" -AsPlainText |
         Should -Be $VaultVal
     }
 
-    It 'given * for Name, Get-Secret should return json string containing value' {
+    It 'should return value of type hashtable when Name arg ends with an asterisk' {
+        $Output = Get-Secret -Vault $VaultName -Name "/$VaultPath/*" -AsPlainText
+        $Output -is [hashtable] | Should -Be $true
+    }
+
+    It 'should parse the value when Name arg ends with asterisk' {
         Get-Secret -Vault $VaultName -Name "/$VaultPath/*" -AsPlainText |
-        ConvertFrom-Json |
         Select-Object -ExpandProperty $VaultKey |
         Should -Be $VaultVal
     }
