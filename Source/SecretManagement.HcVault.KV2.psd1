@@ -1,5 +1,6 @@
 @{
     ModuleVersion     = '0.0.0.1'
+    GUID              = 'd0cb5f62-eed0-4577-91f2-ae4de5d9fde1'
     Author            = 'Erik Whitesides'
     Description       = 'SecretManagement extension for Hashicorp Vault KV2 Engine'
     NestedModules     = @('./SecretManagement.HcVault.KV2.Extension')
@@ -7,7 +8,6 @@
     PrivateData       = @{
         PSData = @{
             Tags       = @('SecretManagement')
-            LicenseUri = 'https://mit-license.org/'
         }
         ReleaseNotes = @"
 0.0.0.1
