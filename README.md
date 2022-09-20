@@ -165,7 +165,7 @@ PS /> Set-Secret -Vault 'myvault' -Name '/creds' -Secret $secret
 
 ### Remove-Secret
 
-example of removing a secret(s) stored at <http://127.0.0.1:8200/v1/secret/creds>
+example of removing secrets stored at <http://127.0.0.1:8200/v1/secret/creds>
 
 ```pwsh
 PS /> Remove-Secret -Vault 'myvault' -Name '/creds'
@@ -199,7 +199,6 @@ integration tests are run from the perspective of the parent SecretManagement mo
 
 ## TODO
 
-- add examples of registering with ldap auth
 - implement Test-SecretVault
 - implement Set-SecretInfo
 - implement Set-Secret -Metadata (using Set-SecretInfo)
