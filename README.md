@@ -30,31 +30,102 @@ $Params = @{
         TokenRenewable = $false #set to true if token is renewable
         TokenCachePath = "$env:USERPROFILE/myvault/.vault-token"
     }
+    AllowClobber = $true #if you want to overwrite existing vault registration
 }
 Register-SecretVault @Params
 ```
 
 ### Get-Secret
 
-example of accessing a secret stored at 'http://127.0.0.1:8200/v1/secret/myapp/user1'
+example of getting secret stored at <http://127.0.0.1:8200/v1/secret/creds/mypass>
 
 ```pwsh
-Get-Secret -Vault 'myvault' -Name '/myapp/user1' -AsPlainText
+PS /> Get-Secret -Vault 'myvault' -Name '/creds/mypass'
+Getting secret /creds/mypass from vault myvault
+System.Security.SecureString
 ```
 
-example of getting a hashtable of all stored at 'http://127.0.0.1:8200/v1/secret/myapp'
+```pwsh
+PS /> Get-Secret -Vault 'myvault' -Name '/creds/mypass' -AsPlainText
+Getting secret /creds/mypass from vault myvault
+mysecret
+```
+
+example of getting hashtable of everything stored at <http://127.0.0.1:8200/v1/secret/creds>
 
 ```pwsh
-Get-Secret -Vault 'myvault' -Name '/myapp/*' -AsPlainText
+PS /> Get-Secret -Vault 'myvault' -Name '/creds/*'
+Getting secret /creds/* from vault myvault
+
+Name                           Value
+----                           -----
+mypass                         System.Security.SecureString
+```
+
+```pwsh
+PS /> Get-Secret -Vault 'myvault' -Name '/creds/*' -AsPlainText
+Getting secret /creds/* from vault myvault
+
+Name                           Value
+----                           -----
+mypass                         mysecret
 ```
 
 ### Get-SecretInfo
 
-add info here
+example of getting secret info (metadata) for all secrets at path <http://127.0.0.1:8200/v1/secret>
+
+```pwsh
+PS /> Get-SecretInfo -Vault 'myvault' -Name '*'
+Getting secret info * from vault myvault
+
+Name    Type      VaultName
+----    ----      ---------
+/creds  Hashtable myvault
+/creds2 Hashtable myvault
+```
+
+example of getting secret info (metadata) for specific path <http://127.0.0.1:8200/v1/secret/creds>
+
+```pwsh
+PS /> Get-SecretInfo -Vault 'myvault' -Name '/creds'
+Getting secret info /creds from vault myvault
+
+Name   Type      VaultName
+----   ----      ---------
+/creds Hashtable myvault
+```
+
+additional metadata properties are output, but are hidden from the default view.
+they can be viewed with Format-List:
+
+```pwsh
+PS /> Get-SecretInfo -Vault 'myvault' -Name '/creds' | fl *
+Getting secret info /creds from vault pestertestvault
+
+Name      : /creds
+Type      : Hashtable
+VaultName : myvault
+Metadata  : {[cas_required, False], [created_time, 2022-09-20T14:32:48.288957134Z], [current_version, 1], [custom_metadata, ]…}
+```
 
 ### Set-Secret
 
-add info here
+example of setting a hashtable stored at <http://127.0.0.1:8200/v1/secret/creds>
+
+```pwsh
+Set-Secret -Vault 'myvault' -Name '/creds' -Secret @{'mypass'='pass123'}
+```
+
+example of setting a PSCredential secret stored at <http://127.0.0.1:8200/v1/secret/creds>
+
+```pwsh
+$secret = [System.Management.Automation.PSCredential]::new(
+    'mypass',
+    (ConvertTo-SecureString -String 'pass123' -AsPlainText -Force)
+)
+Set-Secret -Vault 'myvault' -Name '/creds' -Secret $secret
+```
 
 ### Remove-Secret
 
@@ -88,7 +159,6 @@ integration tests are run from the perspective of the parent SecretManagement mo
 
 ## TODO
 
-- update README for Get-Secret
 - update README for Get-SecretInfo
 - update README for Set-Secret
 - implement Set-SecretInfo
