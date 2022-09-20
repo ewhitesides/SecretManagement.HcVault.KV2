@@ -13,7 +13,7 @@ Install-Module SecretManagement.HcVault.KV2
 
 ## Usage Examples
 
-### Register Vault with local token file
+### Register Vault with token auth
 
 the following would be used if you want to use a token based authentication
 
