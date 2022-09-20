@@ -15,8 +15,9 @@ Install-Module SecretManagement.HcVault.KV2
 
 ### Register Vault with local token file
 
-set a token in a file somewhere on your system,
-for example $env:USERPROFILE/myvault/.vault-token
+the following would be used if you want to use a token based authentication
+
+before running the following, set a token in a file somewhere on your system
 
 ```pwsh
 $Params = @{
@@ -28,7 +29,42 @@ $Params = @{
         Kv2Mount       = '/secret'
         AuthType       = 'Token'
         TokenRenewable = $false #set to true if token is renewable
-        TokenCachePath = "$env:USERPROFILE/myvault/.vault-token"
+        TokenCachePath = "$env:USERPROFILE\myvault\.vault-token"
+    }
+    AllowClobber = $true #if you want to overwrite existing vault registration
+}
+Register-SecretVault @Params
+```
+
+### Register Vault with ldap auth
+
+the following would be used for ldap based authentication.
+
+when the token expires it will attempt to use the ldap credentials to set a fresh token
+
+set a path for the cached token
+
+set a credential file on your system with ldap credentials:
+
+```pwsh
+$Cred = Get-Credential
+$Cred | Export-Clixml -Path "$env:USERPROFILE\myvault\ldapcred.dat"
+```
+
+then:
+
+```pwsh
+$Params = @{
+    Name   = 'myvault'
+    Module = 'SecretManagement.HcVault.KV2'
+    VaultParameters = @{
+        Server         = 'http://127.0.0.1:8200'
+        ApiVersion     = '/v1'
+        Kv2Mount       = '/secret'
+        AuthType       = 'Token'
+        TokenRenewable = $false #set to true if token is renewable
+        TokenCachePath = "$env:USERPROFILE\myvault\.vault-token"
+        LdapCredPath   = "$env:USERPROFILE\myvault\ldapcred.dat
     }
     AllowClobber = $true #if you want to overwrite existing vault registration
 }
@@ -114,26 +150,30 @@ Metadata  : {[cas_required, False], [created_time, 2022-09-20T14:32:48.288957134
 example of setting a hashtable stored at <http://127.0.0.1:8200/v1/secret/creds>
 
 ```pwsh
-Set-Secret -Vault 'myvault' -Name '/creds' -Secret @{'mypass'='mysecret'}
+PS /> Set-Secret -Vault 'myvault' -Name '/creds' -Secret @{'mypass'='mysecret'}
 ```
 
 example of setting a PSCredential secret stored at <http://127.0.0.1:8200/v1/secret/creds>
 
 ```pwsh
-$secret = [System.Management.Automation.PSCredential]::new(
+PS /> $secret = [System.Management.Automation.PSCredential]::new(
     'mypass',
     (ConvertTo-SecureString -String 'mysecret' -AsPlainText -Force)
 )
-Set-Secret -Vault 'myvault' -Name '/creds' -Secret $secret
+PS /> Set-Secret -Vault 'myvault' -Name '/creds' -Secret $secret
 ```
 
 ### Remove-Secret
 
-add info here
+example of removing a secret(s) stored at <http://127.0.0.1:8200/v1/secret/creds>
+
+```pwsh
+PS /> Remove-Secret -Vault 'myvault' -Name '/creds'
+```
 
 ### Test-SecretVault
 
-add info here
+need to implement/add info here
 
 ## Development Info
 
@@ -159,10 +199,8 @@ integration tests are run from the perspective of the parent SecretManagement mo
 
 ## TODO
 
-- update README for Get-SecretInfo
-- update README for Set-Secret
+- add examples of registering with ldap auth
+- implement Test-SecretVault
 - implement Set-SecretInfo
 - implement Set-Secret -Metadata (using Set-SecretInfo)
-- add code for metadata parameter in Set-Secret
-- add tests for metadata parameter in Set-Secret
 - add simple ldap server into the container so we can test ldap auth
