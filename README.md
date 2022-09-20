@@ -41,7 +41,7 @@ example of getting secret stored at <http://127.0.0.1:8200/v1/secret/creds/mypas
 
 ```pwsh
 PS /> Get-Secret -Vault 'myvault' -Name '/creds/mypass'
-Getting secret /creds/mypass from vault myvault
+Getting secret /creds/mypass from vault myvault #info stream, not part of output
 System.Security.SecureString
 ```
 
@@ -101,7 +101,7 @@ they can be viewed with Format-List:
 
 ```pwsh
 PS /> Get-SecretInfo -Vault 'myvault' -Name '/creds' | fl *
-Getting secret info /creds from vault pestertestvault
+Getting secret info /creds from vault myvault
 
 Name      : /creds
 Type      : Hashtable
@@ -114,7 +114,7 @@ Metadata  : {[cas_required, False], [created_time, 2022-09-20T14:32:48.288957134
 example of setting a hashtable stored at <http://127.0.0.1:8200/v1/secret/creds>
 
 ```pwsh
-Set-Secret -Vault 'myvault' -Name '/creds' -Secret @{'mypass'='pass123'}
+Set-Secret -Vault 'myvault' -Name '/creds' -Secret @{'mypass'='mysecret'}
 ```
 
 example of setting a PSCredential secret stored at <http://127.0.0.1:8200/v1/secret/creds>
@@ -122,7 +122,7 @@ example of setting a PSCredential secret stored at <http://127.0.0.1:8200/v1/sec
 ```pwsh
 $secret = [System.Management.Automation.PSCredential]::new(
     'mypass',
-    (ConvertTo-SecureString -String 'pass123' -AsPlainText -Force)
+    (ConvertTo-SecureString -String 'mysecret' -AsPlainText -Force)
 )
 Set-Secret -Vault 'myvault' -Name '/creds' -Secret $secret
 ```
