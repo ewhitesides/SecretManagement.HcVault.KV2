@@ -17,7 +17,7 @@ Install-Module SecretManagement.HcVault.KV2
 
 the following would be used if you want to use a token based authentication
 
-before running the following, set a token in a file somewhere on your system
+before running the following, set a token at TokenCachePath
 
 ```pwsh
 $Params = @{
